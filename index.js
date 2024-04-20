@@ -19,17 +19,16 @@ const app = express();
 
 app.use(bodyParser.json());
 
-const baseUrl = process.env.BASE_URL || "";
-
 // Routes
 app.get("/", (req, res) => {
     res.json({ message: "API Working" });
 });
 
-app.use(`${baseUrl}/donor`, donorRoutes);
-app.use(`${baseUrl}/user`, userRoutes);
+app.use(`/donor`, donorRoutes);
+app.use(`/user`, userRoutes);
 
-const port = 3000;
+// Listen on the appropriate port
+const port = process.env.PORT || 3000;
 app.listen(port, () => {
     console.log(`Server Started at ${port}`);
 });
