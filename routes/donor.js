@@ -1,9 +1,9 @@
 const express = require('express');
-const Model = require('../model/model');
+const Model = require('../model/Donor');
 const router = express.Router()
 
 //Post Method
-router.post('/post', (req, res) => {
+router.post('/post', async (req, res) => {
     const data = new Model({
         name: req.body.name,
         email: req.body.email,
@@ -11,28 +11,28 @@ router.post('/post', (req, res) => {
         blood_group: req.body.blood_group,
         location: req.body.location
     });
+
     try {
-        const dataToSave = data.save();
-        res.status(200).json(dataToSave)
+        const dataToSave = await data.save();
+        res.status(200).json({ message: "Donor added successfully", data: dataToSave });
+    } catch (error) {
+        res.status(400).json({ message: error.message });
     }
-    catch (error) {
-        res.status(400).json({message: error.message})
-    }
-})
+});
+
 
 //Get all Method
-router.get('/getAll', async (req, res) => {
-    try{
+router.get('/get', async (req, res) => {
+    try {
         const data = await Model.find();
-        res.json(data)
+        res.json(data);
+    } catch (error) {
+        res.status(500).json({ message:error.message});
     }
-    catch(error){
-        res.status(500).json({message: error.message})
-    }
-})
+});
 
 //Get by ID Method
-router.get('/getOne/:id', async (req, res) => {
+router.get('/get/:id', async (req, res) => {
     try{
         const data = await Model.findById(req.params.id);
         res.json(data)
