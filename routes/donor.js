@@ -4,21 +4,37 @@ const router = express.Router()
 
 //Post Method
 router.post('/post', async (req, res) => {
-    const data = new Model({
-        name: req.body.name,
-        email: req.body.email,
-        phone: req.body.phone,
-        blood_group: req.body.blood_group,
-        location: req.body.location
-    });
-
     try {
-        const dataToSave = await data.save();
-        res.status(200).json({ message: "Donor added successfully", data: dataToSave });
+        // Check if a donor with the same details already exists
+        const existingDonor = await Model.findOne({
+            name: req.body.name,
+            email: req.body.email,
+            phone: req.body.phone,
+            blood_group: req.body.blood_group,
+            location: req.body.location
+        });
+
+        // If donor already exists, return a message
+        if (existingDonor) {
+            return res.status(400).json({ message: "This Donor already exists" });
+        }
+
+        // If donor doesn't exist, save the new donor
+        const newDonor = new Model({
+            name: req.body.name,
+            email: req.body.email,
+            phone: req.body.phone,
+            blood_group: req.body.blood_group,
+            location: req.body.location
+        });
+
+        const savedDonor = await newDonor.save();
+        res.status(200).json({ message: "Donor added successfully", data: savedDonor });
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
 });
+
 
 
 //Get all Method
